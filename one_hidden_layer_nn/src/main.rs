@@ -5,6 +5,7 @@ use ndarray::Array2;
 use one_hidden_layer_nn::data::injest;
 use one_hidden_layer_nn::helper::fit_logistic_regression_model;
 use one_hidden_layer_nn::helper::ModelResults;
+use one_hidden_layer_nn::onehiddenlayer_nn::nn_model;
 use one_hidden_layer_nn::plot::plot;
 use one_hidden_layer_nn::plot::plot_decision_boundary;
 
@@ -71,10 +72,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // visualise the decision boundary plot
-    let plot_title = "decision_boundary";
+    let plot_title = "linear regression decision boundary";
     plot_decision_boundary(&train_x, model_lr, plot_title, plot_main);
 
-    // one hidden layer NN
+    // one hidden layer NN with n_h-dimensional hidden layer
+    let n_h: usize = 4;
+    let num_iterations: i32 = 10000;
+    let print_cost: bool = false;
+    let (parameters, costs) = nn_model(&train_x, &train_y, n_h, num_iterations, print_cost);
 
     Ok(())
 }

@@ -192,7 +192,6 @@ pub fn generate_flower_planar_dataset(m: usize, a: i32) -> (Array2<f32>, Array2<
 
         // r = a*np.sin(4*t)
         let mut r: Vec<f32> = t.clone();
-        // let mut rr: f32=0.0;
 
         let mut modified_r = Vec::with_capacity(r.len());
         //r.iter().enumerate().for_each(|(_index, value)| {
@@ -201,7 +200,6 @@ pub fn generate_flower_planar_dataset(m: usize, a: i32) -> (Array2<f32>, Array2<
             modified_r.push((a as f32) * rr.sin());
         });
         r = modified_r;
-        // info!("r is: {:?}", r);
 
         // iterate r vector and add random values
         // r = a*np.sin(4*t) + np.random.randn(N)*0.2
@@ -210,15 +208,12 @@ pub fn generate_flower_planar_dataset(m: usize, a: i32) -> (Array2<f32>, Array2<
             .map(|_| rng.gen::<f32>() * 0.2) // scale the random number by multiplying it with 0.2
             .collect();
 
-        //info!("random_numbers for r is: {:?}", random_numbers);
-
         random_numbers
             .iter()
             .enumerate()
             .for_each(|(index, value)| {
                 r[index] += *value;
             });
-        // info!("r is: {:?}", r);
 
         // stacking column-wise vector of coordinates (r*np.sin(t), r*np.cos(t)) vertically into a single array, where each row rep a point
         let mut tx: f32 = 0.0;
@@ -241,7 +236,5 @@ pub fn generate_flower_planar_dataset(m: usize, a: i32) -> (Array2<f32>, Array2<
     let xt = x.t().to_owned();
     let yt = y.t().to_owned();
 
-    //info!("xt is: {:?}", xt);
-    //info!("yt is: {:?}", yt);
     (xt, yt)
 }

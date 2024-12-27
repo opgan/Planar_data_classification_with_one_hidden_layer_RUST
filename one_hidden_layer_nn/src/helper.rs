@@ -49,6 +49,13 @@ pub enum Errors {
     MeanCalculationFailed,
 }
 
+pub struct OneHiddenLayerNNParameters {
+    pub W1: Array2<f32>,
+    pub b1: Array2<f32>,
+    pub W2: Array2<f32>,
+    pub b2: Array2<f32>,
+}
+
 pub struct GradientDescentResults {
     pub w: Array2<f32>,
     pub b: f32,
