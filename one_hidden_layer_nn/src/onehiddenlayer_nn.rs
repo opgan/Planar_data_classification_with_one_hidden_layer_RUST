@@ -5,24 +5,11 @@ use ndarray::prelude::*;
 use rand::thread_rng;
 use rand::Rng;
 use statrs::distribution::Exp;
+use crate::helper::sigmoid;
 
-pub fn tanh(x: Array2<f32>) -> Array2<f32> {
+pub fn tanh(x: &Array2<f32>) -> Array2<f32> {
     (x.mapv(|x| (x).exp()) - (-x).mapv(|x| (x).exp()))
         / (x.mapv(|x| (x).exp()) + (-x).mapv(|x| (x).exp()))
-}
-
-pub fn sigmoid(z: f32) -> f32 {
-    /*
-    Compute the sigmoid of z
-
-    Arguments:
-    z -- A scalar or numpy array of any size.
-
-    Return:
-    s -- sigmoid(z), a probability between 0 and 1
-    */
-
-    1.0 / (1.0 + f32::exp(-z))
 }
 
 pub fn layer_sizes(X: Array2<f32>, Y: Array2<f32>) -> (usize, usize) {
@@ -143,7 +130,7 @@ pub fn compute_cost(A2: &Array2<f32>, Y: &Array2<f32>) -> f32 {
 }
 pub fn forward_propagation(
     X: &Array2<f32>,
-    parameters: OneHiddenLayerNNParameters,
+    parameters: &OneHiddenLayerNNParameters,
 ) -> (Array2<f32>, OneHiddenLayerNNCache) {
     /*
     Argument:
@@ -156,22 +143,23 @@ pub fn forward_propagation(
     */
 
     //Retrieve each parameter from the dictionary "parameters"
-    let W1 = parameters.W1; // (n_h, n_x)
-    let b1 = parameters.b1; // (n_h, 1)
-    let W2 = parameters.W2; // (1, n_h)
-    let b2 = parameters.b2; // (1, 1)
+    let W1 = parameters.W1.clone(); // (n_h, n_x)
+    let b1 = parameters.b1.clone(); // (n_h, 1)
+    let W2 = parameters.W2.clone(); // (1, n_h)
+    let b2 = parameters.b2.clone(); // (1, 1)
 
     // Implement Forward Propagation to calculate A2 (probabilities)
 
-    let Z1 = W1.t().dot(X) + b1;    // (n_h, 1)
-    let A1 = tanh(Z1);              // (n_h, 1)
-    let Z2 = Z1; // W2.t().dot(A1) + b2;   // (1, n_h) . (n_h, 1) -> (1,1)
-    let A2 = sigmoid(Z2);           // (1,1)
+    let Z1 = W1.dot(X) + b1; // (n_h, n_x) . (n_x, m) -> (n_h, m)
+    let A1 = tanh(&Z1); // (n_h, m)
 
-    assert_eq!(A2.shape(), (1, X.shape()[1]));
+    let Z2 = W2.dot(&A1) + b2;   // (1, n_h) . (n_h, m) -> (1,m)
+    let A2 = sigmoid(&Z2); // (1,m)
+
+    assert_eq!(A2.shape(), &[1, X.shape()[1]]);  
 
     let z1_owned = Z1.to_owned();
-    let a1_owned = A2.to_owned();
+    let a1_owned = A1.to_owned();
     let z2_owned = Z2.to_owned();
     let a2_owned = A2.to_owned();
 
@@ -210,7 +198,7 @@ pub fn nn_model(
     for i in 0..num_iterations {
         // Backpropagation. Inputs: "parameters, cache, X, Y". Outputs: "grads".
 
-        let (A2, cache) = forward_propagation(X, parameters);
+        let (A2, cache) = forward_propagation(X, &parameters);
         let cost: f32 = compute_cost(&A2, &Y);
         //grads = backward_propagation(parameters, cache, X, Y)
         // parameters = update_parameters(parameters, grads)

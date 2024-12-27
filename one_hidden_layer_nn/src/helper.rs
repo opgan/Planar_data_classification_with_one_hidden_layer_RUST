@@ -92,6 +92,21 @@ fn create_array(b: f32) -> Result<Array2<f32>, Errors> {
     Array2::from_shape_vec((1, 1), vec![b]).map_err(Errors::ShapeError)
 }
 
+pub fn sigmoid(z: &Array2<f32>) -> Array2<f32> {
+    /*
+    Compute the sigmoid of z as 1 / (1 + np.exp(-z))
+    Apply the exponential function to each element
+
+    Arguments:
+    z -- A scalar or numpy array of any size.
+
+    Return:
+    s -- sigmoid(z), a probability between 0 and 1
+    */
+
+    1.0 / (1.0 + z.mapv(|x| (-x).exp()))
+}
+
 pub fn fit_logistic_regression_model(
     train_x: &Array2<f32>,
     train_y: &Array2<f32>,
