@@ -49,6 +49,13 @@ pub enum Errors {
     MeanCalculationFailed,
 }
 
+pub struct OneHiddenLayerNNCache {
+    pub Z1: Array2<f32>,
+    pub A1: Array2<f32>,
+    pub Z2: Array2<f32>,
+    pub A2: Array2<f32>,
+}
+
 pub struct OneHiddenLayerNNParameters {
     pub W1: Array2<f32>,
     pub b1: Array2<f32>,
